@@ -114,6 +114,18 @@ window.View.prototype = {
 			"count": count,
 			"status": status, // -1(下载失败了) , 0(下载完成) , 1(正在下载)
 		};
+	},
+
+
+	dynamicChangeView: {
+
+		// 使用 Websocket 显示下载进度
+		useWebsocketShowDownloadProcess : function(res){
+
+
+		},
+
+
 	}
 
 
