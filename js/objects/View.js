@@ -13,6 +13,8 @@ window.View = function(){
 
 window.View.prototype = {
 
+	constructor： window.View,
+
 	init : function(){
 
 		// 暂无任务

@@ -22,16 +22,10 @@
 			return true;
 		},
 
-		init: function(){
-
-			this.eventsRegister();
-		},
+		// 只开始下载其中的一个
+		startDownload: function(){
 
 
-		eventsRegister: function(){
-
-			this.allStart();
-			this.allStop();
 		},
 
 		// 全部开始下载
@@ -58,14 +52,6 @@
 
 			});
 		},
-
-		// 只开始下载其中的一个
-		startDownload: function(){
-
-
-		},
-
-
 
 	};
 
