@@ -7,7 +7,7 @@ require_once '../Workerman/Autoloader.php';
 require_once "../php/curl.php";
 
 // 创建一个Worker监听2345端口，使用http协议通讯
-$http_worker = new Worker("websocket://0.0.0.0:2345");
+$http_worker = new Worker("websocket://0.0.0.0:1234");
 
 // 启动4个进程对外提供服务
 $http_worker->count = 4;
@@ -26,21 +26,14 @@ $http_worker->onMessage = function($connection, $data)
 
 	$matchs = curlBaidu("https://image.baidu.com/search/index?tn=baiduimage&word={$keyword}", 
 	$keyword, $numberId, $taskId);
-	
-	// 客户端要求停止下载
-    $status = (int)($data[0]['status']);
-	if($status===2){
 
-		$data['resMsg'] = "已停止下载";
-		$connection->send(json_encode($data,JSON_UNESCAPED_UNICODE));
-		return;
-	}
+	echo "\ntaskId : {$taskId} , downloading ... \n";
 
 	if(isset($matchs[1])&&is_array($matchs[1])){
 
 		foreach ($matchs[1] as $img_url) {
 
-			// 如果下载数量多于count时，退出( 爬到很多图片的情况 )
+			// 下载数量多于count时，退出( 爬到很多图片的情况 )
 			if($downloadedCount>=$count){
 
 				break;

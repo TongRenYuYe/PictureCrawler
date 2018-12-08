@@ -65,6 +65,7 @@
 
 			#AllStopButton{
 
+				display: none;
 				background: #d068c1;
 			}#AllStopButton:hover{background: #d050c1;cursor: pointer;}
 

@@ -78,13 +78,21 @@ window.View.prototype = {
 			return false;
 		}
 
+		// 已经下载，就先不执行了 , 这个版本不支持暂停下载
+		if(_this.attr("data-status")==1){
+
+			return false;
+		}
+
 		if( _this.attr("data-status") === ''|| _this.attr("data-status") == 2){
 
 			_this.attr("data-status", 1).attr("data-status-msg","正在下载").text("正在下载");
-		}else{
-
-			_this.attr("data-status", 2).attr("data-status-msg","已暂停").text("已暂停");
 		}
+		// 这个版本不支持暂停下载
+		// else{
+
+		// 	_this.attr("data-status", 2).attr("data-status-msg","已暂停").text("已暂停");
+		// }
 
 		_this.attr("data-id", index);
 
@@ -113,7 +121,13 @@ window.View.prototype = {
 			}));
 			window.Downloader.prototype.startDownload(downloadQueue);
 
+
+			// 这个版本不支持暂停下载
+			// if($(this).attr("data-status")==2){
+			//	console.log("暂停任务 " + $(this).attr("data-id") + " : ");
+			// }else{
 			console.log("下载任务 " + $(this).attr("data-id") + " : ");
+			// }
 			console.log(downloadQueue);
 		});
 	},
@@ -175,6 +189,7 @@ window.View.prototype = {
 				$(".task").eq(id).find("input").attr("disabled","disabled");
 			}
 
+			$(".task").eq(id).find(".startDownloadButton").attr("data-downloaded-count",downloadedCount);
 			$(".task").eq(id).find(".visualDownloadContainer .processBar").css("width",(downloadedCount/count)*200);
 			$(".task").eq(id).find(".downloadedCount").text(downloadedCount);
 			$(".task").eq(id).find(".count").text(count);
