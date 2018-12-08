@@ -4,7 +4,7 @@ use Workerman\Worker;
 
 require_once '../Workerman/Autoloader.php';
 
-require_once "../php/robot.php";
+require_once "../php/curl.php";
 
 // 创建一个Worker监听2345端口，使用http协议通讯
 $http_worker = new Worker("websocket://0.0.0.0:2345");
@@ -18,21 +18,51 @@ $http_worker->onMessage = function($connection, $data)
 
 	$data = json_decode($data, TRUE);
 
-	// 下载总量	
-	$count = $data[0]['count'];
+	$count = $data[0]['count']; // 下载总量	
+	$downloadedCount = $data[0]['downloadedCount']; // 已下载的数量
+	$keyword = $data[0]['keyword'];
+	$numberId = $downloadedCount+1;
+	$taskId = $data[0]['id'];
+
+	$matchs = curlBaidu("https://image.baidu.com/search/index?tn=baiduimage&word={$keyword}", 
+	$keyword, $numberId, $taskId);
 	
-	// 已下载的数量
-	$downloadedCount = $data[0]['downloadedCount'];
+	// 客户端要求停止下载
+    $status = (int)($data[0]['status']);
+	if($status===2){
 
-	while($downloadedCount<$count){
-	    
-		robot($data[0]['keyword'], $downloadedCount+1, $data[0]['id']);
-
-		$data[0]['downloadedCount'] = (++$downloadedCount);
-
-	    // 向浏览器发送
-    	$connection->send(json_encode($data,JSON_UNESCAPED_UNICODE));
+		$data['resMsg'] = "已停止下载";
+		$connection->send(json_encode($data,JSON_UNESCAPED_UNICODE));
+		return;
 	}
+
+	if(isset($matchs[1])&&is_array($matchs[1])){
+
+		foreach ($matchs[1] as $img_url) {
+
+			// 如果下载数量多于count时，退出( 爬到很多图片的情况 )
+			if($downloadedCount>=$count){
+
+				break;
+			}
+
+			++$downloadedCount;
+
+			curlResource($img_url, $keyword, $downloadedCount, $taskId);
+
+			$data[0]['downloadedCount'] = $downloadedCount;
+	    	$connection->send(json_encode($data,JSON_UNESCAPED_UNICODE)); // 向浏览器发送
+		}
+	}
+
+	// 爬取到的图片不够数
+	while($downloadedCount<$count){
+
+		++$downloadedCount;
+		$data[0]['downloadedCount'] = $downloadedCount;
+    	$connection->send(json_encode($data,JSON_UNESCAPED_UNICODE)); // 向浏览器发送
+	}
+	
 };
 
 // 运行worker

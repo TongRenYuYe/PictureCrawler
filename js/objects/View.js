@@ -72,9 +72,9 @@ window.View.prototype = {
 			alert("下载任务 " + (index+1) +" ： 请输入内容");
 			return false;
 		}
-		if(count<1||count>100){
+		if(count<1||count>50){
 
-			alert("下载任务 " + (index+1) +" : 每个任务只能下载1-100张");
+			alert("下载任务 " + (index+1) +" : 每个任务只能下载1-50张");
 			return false;
 		}
 

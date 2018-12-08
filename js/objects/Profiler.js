@@ -10,7 +10,15 @@
 
 		receiveResponse: function(res){
 
-			window.View.prototype.dynamicChangeView.useWebsocketShowDownloadProcess( (JSON.parse(res.data))[0] );
+			var data = (JSON.parse(res.data))[0];
+
+			if(data['res']==2){
+
+				alert();
+				console.log(data['resMsg']);
+			}
+
+			window.View.prototype.dynamicChangeView.useWebsocketShowDownloadProcess( data );
 		}
 	};
 
