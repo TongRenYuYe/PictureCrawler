@@ -4,6 +4,8 @@ use Workerman\Worker;
 
 require_once '../Workerman/Autoloader.php';
 
+require_once "../php/robot.php";
+
 // 创建一个Worker监听2345端口，使用http协议通讯
 $http_worker = new Worker("websocket://0.0.0.0:2345");
 
@@ -23,12 +25,11 @@ $http_worker->onMessage = function($connection, $data)
 	$downloadedCount = $data[0]['downloadedCount'];
 
 	while($downloadedCount<$count){
+	    
+		robot($data[0]['keyword'], $downloadedCount+1, $data[0]['id']);
 
 		$data[0]['downloadedCount'] = (++$downloadedCount);
-	    
-		
 
-	    
 	    // 向浏览器发送
     	$connection->send(json_encode($data,JSON_UNESCAPED_UNICODE));
 	}

@@ -1,7 +1,6 @@
 <?php
 
-
-function curlResources($url, $keyword, $numberId, $downloaderId){
+function getCURL($url){
 
 	$ch = curl_init();
 
@@ -19,23 +18,52 @@ function curlResources($url, $keyword, $numberId, $downloaderId){
 	// 要求返回值
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
+	return $ch;
+}
+
+
+function curlBaidu($url, $keyword, $numberId, $taskId){
+
+	// 获取CURL
+	$ch = getCURL($url);
+
 	// 执行
 	$resource = curl_exec($ch);
 
+	// preg_match_all("/\"objURL\":\".+\.jpg\"/", $resource, $matchs);
+	// $pattern = "/\"objURL\":\".+\.jpg\"/";
+	$pattern = '/objURL":"(.*?)",/';
+	preg_match_all($pattern, $resource, $matchs);
+	if(isset($matchs[1])&&is_array($matchs[1])){
+
+		foreach ($matchs[1] as $img_url) {
+
+			curlResource($img_url, $keyword, $numberId, $taskId);
+		}
+	}
+
 	// 关闭 CURL
 	curl_close($ch);
+
+}
+
+function curlResource($url, $keyword, $numberId, $taskId){
+
+	// 获取CURL
+	$ch = getCURL($url);
 	
+	// 执行
+	$resource = curl_exec($ch);
+
 	// 保存到本地
-	$dir = "../resources/{$downloaderId}-{$keyword}/";
+	$dir = "../resources/{$taskId}-{$keyword}/";
 	if(!is_dir($dir)){
 
-		mkdir($dir);
+		mkdir($dir, 0777, true);
 	}
 	$file=fopen("{$dir}/{$numberId}.jpg","w+");
 	fwrite($file, $resource);
 	fclose($file);
 }
-
-
 
 
