@@ -1,4 +1,11 @@
 # PictureCrawler
+
+<p align="center">
+<img src="https://img.shields.io/badge/language-PHP/NodeJS-red.svg">
+<img src="https://img.shields.io/badge/license-MIT-black.svg">
+</p>
+
+
 基于 PHP/NodeJS 的图片爬虫下载器（A Picture Crawler Based on PHP/NodeJS）
 
 ## 摘要
