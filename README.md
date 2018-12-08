@@ -1,5 +1,5 @@
 # PictureCrawler
-基于 PHP/NodeJS 的百度图片爬虫下载器（A Picture Crawler Based on PHP/NodeJS）
+基于 PHP/NodeJS 的图片爬虫下载器（A Picture Crawler Based on PHP/NodeJS）
 
 ## ✎ 摘要（Synopsis）
 
@@ -23,4 +23,7 @@ PHP 版本实际效果如下
 
 - 从效果截图看，就发现每一个下载任务都是有对应的下载进度的，传统的HTTP需要使用轮训才能实现这个功能，但轮训的代价太大，所以只能选择使用 Websocket 进行长连接通信。
 
+## 关于爬图
+
+目前，我代码里面是直接爬的百度图片，而且，很多细节有待改进，比如有些图片无法成功读取并写入，增加下载的图片个数，等等，这些都是之后细节上需要优化的。
 
