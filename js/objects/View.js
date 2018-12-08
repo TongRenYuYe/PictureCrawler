@@ -13,13 +13,14 @@ window.View = function(){
 
 window.View.prototype = {
 
-	constructor： window.View,
+	constructor: window.View,
 
 	init : function(){
 
 		// 暂无任务
 		$("#TaskContainer").append($("#TemplateOfTaskIsEmpty").html());
 
+		// 事件注册
 		this.eventsRegister();
 
 	},
@@ -31,6 +32,7 @@ window.View.prototype = {
 		this.startDownload();
 		this.allStartDownload();
 		this.allStopDownlaod();
+		this.dynamicChangeView.onInput();
 	},
 
 
@@ -55,7 +57,38 @@ window.View.prototype = {
 			}
 
 			$("#TaskContainer").append($("#TemplateOfTask").html());
-		}),
+		});
+	},
+
+
+	checkInput: function(_this){
+		
+		var index =  _this.parent().parent().index();
+
+		var keyword = _this.attr("data-keyword");
+		var count = parseInt( _this.attr("data-count") );
+
+		if(keyword===''){
+			alert("下载任务 " + (index+1) +" ： 请输入内容");
+			return false;
+		}
+		if(count<1||count>100){
+
+			alert("下载任务 " + (index+1) +" : 每个任务只能下载1-100张");
+			return false;
+		}
+
+		if( _this.attr("data-status") === ''|| _this.attr("data-status") == 2){
+
+			_this.attr("data-status", 1).attr("data-status-msg","正在下载").text("正在下载");
+		}else{
+
+			_this.attr("data-status", 2).attr("data-status-msg","已暂停").text("已暂停");
+		}
+
+		_this.attr("data-id", index);
+
+		return true;
 	},
 
 	// 开始下载
@@ -63,10 +96,25 @@ window.View.prototype = {
 
 		$(document).on("click", ".startDownloadButton", function(){
 
+			if(!window.View.prototype.checkInput($(this))){
+
+				return;
+			}
+
 			var downloadQueue = [];
-			downloadQueue.push(window.View.prototype.packageTask($(this).attr("data-id"),$(this).attr("data-keyword"),$(this).attr("data-count"),1));
-			
+			downloadQueue.push(window.View.prototype.packageTask({
+
+				"id": $(this).attr("data-id"),
+				"keyword": $(this).attr("data-keyword"),
+				"count": $(this).attr("data-count"),
+				"downloadedCount": $(this).attr("data-downloaded-count"),
+				"status": $(this).attr("data-status"),
+				"statusMsg": $(this).attr("data-status-msg")
+			}));
 			window.Downloader.prototype.startDownload(downloadQueue);
+
+			console.log("下载任务 " + $(this).attr("data-id") + " : ");
+			console.log(downloadQueue);
 		});
 	},
 
@@ -75,15 +123,8 @@ window.View.prototype = {
 
 		$(document).on("click", "#AllStartButton", function(){
 
-			var downloadQueue = [];
-			
-			// 遍历所有的下载任务，获取所有的数据全部放到队列中。
-			$("#TaskContainer .task").each(function(i){
-
-				downloadQueue.push(window.View.prototype.packageTask($(this).attr("data-id"),$(this).attr("data-keyword"),$(this).attr("data-count"),1));
-			});
-
-			window.Downloader.prototype.allStartDownload(downloadQueue);
+			// 模拟点击全都“开始下载”按钮
+			$(".startDownloadButton").click();
 		});
 	},
 
@@ -92,27 +133,22 @@ window.View.prototype = {
 
 		$(document).on("click", "#AllStopButton", function(){
 
-			var downloadQueue = [];
-			
-			// 遍历所有的下载任务，获取所有的数据全部放到队列中。
-			$("#TaskContainer .task").each(function(i){
-
-				downloadQueue.push(window.View.prototype.packageTask($(this).attr("data-id"),$(this).attr("data-keyword"),$(this).attr("data-count"),1));
-			});
-
-			window.Downloader.prototype.allStartDownload(downloadQueue);
+			// 模拟点击全部"开始下载"按钮
+			$(".startDownloadButton").click();
 		});
 	},
 
 	// 封装下载任务
-	packageTask: function(){
+	packageTask: function(task){
 
 		return {
 
-			"id": id,
-			"keyword": keyword,
-			"count": count,
-			"status": status, // -1(下载失败了) , 0(下载完成) , 1(正在下载)
+			"id": task.id,
+			"keyword": task.keyword,
+			"count": task.count,
+			"downloadedCount": task.downloadedCount,
+			"status": task.status, // -1(下载失败了) , 0(下载完成) , 1(正在下载), 2(下载被暂停) 
+			"statusMsg": task.statusMsg
 		};
 	},
 
@@ -120,11 +156,45 @@ window.View.prototype = {
 	dynamicChangeView: {
 
 		// 使用 Websocket 显示下载进度
-		useWebsocketShowDownloadProcess : function(res){
+		useWebsocketShowDownloadProcess : function(data){
 
+			id = data.id;
+			keyword = data.keyword;
+			count = data.count;
+			downloadedCount = data.downloadedCount;
+			status = data.status;
+			statusMsg = data.statusMsg;
 
+			// 下载完成
+			if(downloadedCount>=count){
+
+				// 此按钮不能再下载了
+				$(".task").eq(id).find(".startDownloadButton").attr("data-status",0).text("下载成功").attr("disabled","disabled");
+
+				// 也不能再输入了
+				$(".task").eq(id).find("input").attr("disabled","disabled");
+			}
+
+			$(".task").eq(id).find(".visualDownloadContainer .processBar").css("width",(downloadedCount/count)*200);
+			$(".task").eq(id).find(".downloadedCount").text(downloadedCount);
+			$(".task").eq(id).find(".count").text(count);
+
+			console.log("response.data : ");
+			console.log(data);
 		},
 
+		onInput: function(){
+
+			$(document).on("blur", ".input-keyword",function(){
+
+				$(this).parent().parent().find(".startDownloadButton").attr("data-keyword", $(this).val());
+			});
+
+			$(document).on("blur", ".input-count",function(){
+
+				$(this).parent().parent().find(".startDownloadButton").attr("data-count", $(this).val());
+			});
+		}
 
 	}
 

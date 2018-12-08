@@ -40,17 +40,27 @@ ul,li{
 
 	.visualDownloadContainer{
 
-
+		display: inline-block;
+		border: 1px solid #DDD;
+		background: #DDD;
+		width: 200px;
+		border-radius: 200px;
+		height: 10px;
+		text-align: left;
+    	line-height: 10px;
 	}
 
 		.processBar{
 
-
+			display: inline-block;
+			border-radius: 200px;
+			height:10px;
+			background:#000;
 		}
 
 	.visualCountContainer{
 
-
+		margin-bottom: 7px;
 	}
 	li.col-4{
 
@@ -71,7 +81,12 @@ ul,li{
 
 			background: #333;
 			cursor: pointer;
+		}.col-4 button:disabled:hover{
+
+			background: #555;
+			cursor: not-allowed;
 		}
+
 
 #TaskContainer{
 

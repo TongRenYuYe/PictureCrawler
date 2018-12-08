@@ -11,46 +11,9 @@
 
 		constructor: window.PictureCrawler,
 
-		checkDownloadQueue: function(){
+		startDownload: function(downloadQueue){
 
-			if(downloadQueue.length<1){
-
-				alert("下载队列不能为空 !");
-				return false;
-			}
-
-			return true;
-		},
-
-		// 只开始下载其中的一个
-		startDownload: function(){
-
-
-		},
-
-		// 全部开始下载
-		allStartDownload: function(){
-
-			$(document).on("click","#AllStartButton",function(){
-				
-				if(! window.PictureCrawler.prototype.checkDownloadQueue() ){
-					return;
-				}
-
-
-			});
-		},
-
-		// 全部停止下载
-		allStopDownload: function(){
-
-			$(document).on("click","#AllStopButton",function(){
-
-				if(! window.PictureCrawler.prototype.checkDownloadQueue() ){
-					return;
-				}
-
-			});
+			window.MyWebSocket.prototype.send(downloadQueue);			
 		},
 
 	};
