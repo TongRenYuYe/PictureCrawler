@@ -5,8 +5,9 @@
 <img src="https://img.shields.io/badge/license-MIT-black.svg">
 </p>
 
-
 基于 PHP/NodeJS 的图片爬虫下载器（A Picture Crawler Based on PHP/NodeJS）
+
+[立即使用](#usage)
 
 ## 摘要
 
@@ -14,13 +15,25 @@ PHP 版本实际效果如下
 <img src="https://github.com/Lvsi-China/PictureCrawler/raw/master/extra/images/logo.gif">
 
 ```
-对于PHP版本，我使用的是 workerman，但是 workerman 在 Windows 上不支持多进程，所以，这个效果图看到的3个并发下载还是在单进程里面执行的。不过不用担心！只要你的系统是Linux系统，就会看到多进程并发下载的效果了。
+对于PHP版本，我使用的是 workerman，但是 workerman 在 Windows 上不支持多进程，
+所以，这个效果图看到的3个并发下载还是在单进程里面执行的。
+不过不用担心！只要你的系统是Linux系统，就会看到多进程并发下载的效果了。
 ```
 ## 介绍
 
 项目会使用两个语言实现，分别是 PHP版本(已完成) 和 NodeJS版本(未完成)。
 
 通过用户输入的关键字和图片数量，后台服务会使用CURL(PHP)抓取网页的内容，然后使用正则去分析出相关图片的URL，紧接着，再次使用CURL(PHP)根据图片的URL去读取图片的内容，然后存入本地文件。
+
+## <span id="usage">使用</span>
+
+PHP 版本
+```
+1. 下载本项目
+2. 开启本地 Apache 服务器
+3. 直接运行 index.html 文件，即可使用。
+```
+
 
 ## 前端架构图
 
