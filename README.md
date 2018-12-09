@@ -46,7 +46,7 @@ PHP 版本实际效果如下
 5. 提供 PHP 和 NodeJS 两种版本。
 6. ... ...
 
-## ✣ 前端架构图 ( Front end architecture )
+## ✣ <span id="article-FrontEndArchitecture">前端架构图 ( Front end architecture )</span>
 
 前端没有使用React等框架的大致架构如下
 
@@ -78,7 +78,78 @@ PHP 版本实际效果如下
 
 常见的进程通信方式包括管道，消息队列和共享内存等，具体大家可以Google看看，我使用的是共享内存的方式，具体实现是通过 Redis 缓存系统实现的，每当进程收到【暂停消息】的时候，在缓存中将下载任务对应的状态置为暂停，然后另一个进程发现自己的状态为暂停，就不会再下载了。大致过程就是这样。
 
-## 关于下载进度条组件 ( About download progress component )
+## 关于下载进度 ( About download progress component )
+
+#### JS如何获取下载进度？
+
+后端服务每当下载完一个图片的时候，都会向前端发送消息(包括下载进度)。前端监听到消息之后(使用WebSocket协议)立即把原始未处理的消息传给```Profiler```，```Profiler```把数据解析后传给视图```View```，由视图更新( 如果还不明白，可以看 [前端架构图](#article-FrontEndArchitecture) )。经过这一系列的流程，即可实现下载进度可视化了。
+
+关于后端PHP发送下载进度消息的代码如下：
+
+```php
+foreach ($matchs[1] as $img_url) {
+
+	// 下载数量多于count时，退出( 爬到很多图片的情况 )
+	if($downloadedCount>=$count){
+
+		break;
+	}
+
+	++$downloadedCount;
+
+	curlResource($img_url, $keyword, $downloadedCount, $taskId);
+
+	$data[0]['downloadedCount'] = $downloadedCount;
+	$connection->send(json_encode($data,JSON_UNESCAPED_UNICODE)); // 向浏览器发送
+}
+```
+
+#### 进度条小组件
+
+这个很简单，主要是通过设置进度条宽度为 ```(downloadedCount/count)*200``` 来实现的。具体的前端代码如下所示：
+
+```css
+/* task.css */
+.visualCountContainer{
+
+	margin-bottom: 7px;
+}
+.visualDownloadContainer{
+
+	display: inline-block;
+	border: 1px solid #DDD;
+	background: #DDD;
+	width: 200px;
+	border-radius: 200px;
+	height: 10px;
+	text-align: left;
+	line-height: 10px;
+}
+
+	.processBar{
+
+		display: inline-block;
+		border-radius: 200px;
+		height:10px;
+		background:#000;
+	}
+```
+
+```html
+<!-- index.html -->
+<li class="col col-3">
+	<div class="visualCountContainer">
+		<span class="downloadedCount">0</span> / <span class="count">0</span>
+	</div>
+	<div class="visualDownloadContainer"><span class="processBar"></span></div>
+</li>
+```
+
+```javascript
+$(".task").eq(id).find(".visualDownloadContainer .processBar").css("width",(downloadedCount/count)*200);
+$(".task").eq(id).find(".downloadedCount").text(downloadedCount);
+$(".task").eq(id).find(".count").text(count);
+```
 
 
 
