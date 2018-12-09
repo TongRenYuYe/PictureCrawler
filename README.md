@@ -5,9 +5,7 @@
 <img src="https://img.shields.io/badge/license-MIT-black.svg">
 </p>
 
-基于 PHP/NodeJS 的图片爬虫下载器（A Picture Crawler Based on PHP/NodeJS）
-
-[立即使用](#usage)
+基于 PHP/NodeJS 的图片爬虫下载器（A Picture Crawler Based on PHP/NodeJS），[立即使用](#usage)
 
 ## ✎ 摘要( Synopsis )
 
@@ -28,11 +26,13 @@ PHP 版本实际效果如下
 ## <span id="usage">♗ 使用</span>
 
 PHP 版本
-```
-1. 下载本项目
-2. 开启本地 Apache 服务器
-3. 直接运行 index.html 文件，即可使用。
-```
+
+> 1. 下载本项目，并下载 [workerman](https://www.workerman.net/download)
+> 2. 将下载的workerman放置到如下图所示的路径中。
+> <img src="https://github.com/Lvsi-China/PictureCrawler/raw/master/extra/images/workerman-location.jpg">
+> 3. 开启本地 Apache 服务器。
+> 4. 直接运行 index.html 文件，即可使用。
+
 
 ## ✪ 功能( Features )
 
